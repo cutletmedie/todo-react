@@ -6,30 +6,40 @@ interface TaskState {
     done: boolean;
 }
 
-export type TaskProps = { id: string } & TaskState;
+export interface TaskProps extends TaskState {
+    id: string;
+}
 
-export class Task extends React.Component<TaskProps, TaskState> {
-    constructor(props: TaskProps) {
+interface TaskComponentProps extends TaskProps {
+    removeTask: (id: string) => void;
+}
+
+export class Task extends React.Component<TaskComponentProps, TaskState> {
+    constructor(props: TaskComponentProps) {
         super(props);
         this.state = {
             text: this.props.text,
             done: this.props.done,
         }
-        this.toggleCheckbox = this.toggleCheckbox.bind(this);
+        // this.toggleCheckbox = this.toggleCheckbox.bind(this);
     }
 
-    toggleCheckbox() {
-        this.setState(state => ({done: !state.done}));
-    }
+    // toggleCheckbox() {
+    //     this.setState(state => ({done: !state.done}));
+    // }
 
     render() {
-        console.log('rendered task ' + this.state.text );
+        console.log('rendered task ' + this.state.text);
         return (
-            <div className={styles.task}>
-                <p>{this.state.text}</p>
-                <input type={"checkbox"} checked={this.state.done}
-                       onChange={this.toggleCheckbox}/>
-            </div>
+            <li>
+                <div className={styles.task}>
+                    <p>{this.state.text}</p>
+                    <input type={"checkbox"} checked={this.state.done}
+                           onChange={() => this.setState(state => ({done: !state.done}))}/>
+                    <button
+                        onClick={() => this.props.removeTask(this.props.id)}/>
+                </div>
+            </li>
         );
     }
 }
